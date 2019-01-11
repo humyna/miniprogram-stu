@@ -52,7 +52,8 @@ Page({
         msg: 'this is a template',
         time: '2019-01-11'
       }
-    )
+    ),
+    loading :false
   },
 
   switch:function(e) {
@@ -86,12 +87,37 @@ Page({
   tapName:function(e){
     console.log(e)
   },
+  tap:function(e){
+    this.setData({loading:true});
+    //TODO 做其他耗时的事，然后恢复
+
+    this.setData({ loading: false });
+  },
 
   /**
    * Lifecycle function--Called when page load
    */
   onLoad: function (options) {
+    // wx.showToast({
+    //   title: '已加载',
+    //   icon: 'success',
+    //   duration: 1500
+    // })
 
+    wx.showModal({
+      title: '标题',
+      content: '练习模态通知',
+      confirmText: '主操作',
+      cancelText: '次要操作',
+      success:function(res){
+        if(res.confirm){
+          console.log('用户点击主操作')
+        }else if(res.cancel){
+          console.log('用户点击次要操作')
+        }
+      }
+
+    })
   },
 
   /**
@@ -126,6 +152,11 @@ Page({
    * Page event handler function--Called when user drop down
    */
   onPullDownRefresh: function () {
+    // 用户触发了下拉刷新操作
+    console.log("用户触发了下拉刷新操作");
+    // 拉取新数据重新渲染界面
+    console.log("拉取新数据重新渲染界面");
+    wx.stopPullDownRefresh() // 可以停止当前页面的下拉刷新。
 
   },
 
@@ -133,7 +164,7 @@ Page({
    * Called when page reach bottom
    */
   onReachBottom: function () {
-
+    console.log("当界面的下方距离页面底部距离小于100像素时触发回调")
   },
 
   /**

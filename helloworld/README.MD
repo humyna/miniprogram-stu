@@ -335,3 +335,69 @@ wx.canIUse('button.open-type.contact')
 
 3.强制升级
 我们可以选择合适的判断方法来做小程序的向前兼容，以保证我们的小程序在旧版本的微信客户端也能工作正常。在不得已的情况下（小程序强依赖某个新的API或者组件时），还可以通过在小程序管理后台设置“基础库最低版本设置”来达到不向前兼容的目的。例如你选择设置你的小程序只支持1.5.0版本以上的宿主环境，那么当运行着1.4.0版本宿主环境的微信用户打开你的小程序的时候，微信客户端会显示当前小程序不可用，并且提示用户应该去升级微信客户端。
+
+#CH4 场景应用
+
+一、布局方法
+flex
+
+二、界面交互
+1.触摸反馈
+hover-class样式或者loading属性
+
+参考：代码清单4-2 设置button的loading属性
+https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000224fc9d0f98cb0086f4eff5180a
+
+
+2.Toast
+显示/隐藏Toast
+Page({
+
+  onLoad: function() {
+
+    wx.showToast({ // 显示Toast
+
+      title: '已发送',
+
+      icon: 'success',
+
+      duration: 1500
+
+    })
+
+    // wx.hideToast() // 隐藏Toast
+
+  }
+})
+
+注意：不应该把Toast用于错误提示，因为错误提示需要明确告知用户具体原因，因此不适合用这种一闪而过的Toast弹出式提示
+
+3.模态对话框
+一般需要用户明确知晓操作结果状态的话，会使用模态对话框来提示，同时附带下一步操作的指引。
+Page({
+
+  onLoad: function() {
+    wx.showModal({
+      title: '标题',
+
+      content: '告知当前状态，信息和解决方法',
+
+      confirmText: '主操作',
+
+      cancelText: '次要操作',
+
+      success: function(res) {
+
+        if (res.confirm) {
+
+          console.log('用户点击主操作')
+
+        } else if (res.cancel) {
+
+          console.log('用户点击次要操作')
+
+        }
+      }
+    })
+  }
+})

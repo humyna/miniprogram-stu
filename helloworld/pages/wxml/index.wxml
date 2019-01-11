@@ -75,5 +75,11 @@ https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000ee2c29d4f80
 
 <image mode="scaleToFill" src="../../images/2018122103.png"></image>
 
-<!--事件-->
-<view id="tapTest" data-hi="wechat" bindtap='tapName'> Click Me!</view>
+<!--事件，交互样式-->
+<view id="tapTest" data-hi="wechat" bindtap='tapName' hover-class='hover'> Click Me!</view>
+
+<!--交互：loading-->
+<button loading='{{loading}}' bindtap='tap'>opt</button>
+
+<!--可滚动视图组件-->
+<scroll-view scroll-x='2000'>可滚动视图</scroll-view>
