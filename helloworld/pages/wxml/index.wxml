@@ -71,4 +71,9 @@ https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000ee2c29d4f80
 
 <!--引用- import、include->
 <!--需要注意的是 import 有作用域的概念，即只会 import 目标文件中定义的 template，而不会 import 目标文件中 import 的 template，简言之就是 import 不具有递归的特性。>
-<!--将目标文件中除了 <template/> <wxs/> 外的整个代码引入，相当于是拷贝到 include 位置>
+<!--将目标文件中除了 <template/> <wxs/> 外的整个代码引入，相当于是拷贝到 include 位置-->
+
+<image mode="scaleToFill" src="../../images/2018122103.png"></image>
+
+<!--事件-->
+<view id="tapTest" data-hi="wechat" bindtap='tapName'> Click Me!</view>

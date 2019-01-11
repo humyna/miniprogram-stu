@@ -83,6 +83,9 @@ Page({
       numberArray :this.data.numberArray
     })
   },
+  tapName:function(e){
+    console.log(e)
+  },
 
   /**
    * Lifecycle function--Called when page load

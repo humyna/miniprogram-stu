@@ -199,3 +199,139 @@ app.json定义小程序底部tab
 下面链接中 https://developers.weixin.qq.com/ebook?action=get_post_info&docid=0004eec99acc808b00861a5bd5280a 查看
 表3-5 页面路由触发方式及页面生命周期函数的对应关系
 表3-6 页面路由触发方式及页面生命周期函数的对应关系（tap页面）
+
+三、组件
+一个小程序页面可以分解成多个部分组成，组件就是小程序页面的基本组成单元。为了让开发者可以快速进行开发，小程序的宿主环境提供了一系列基础组件。
+
+组件是在WXML模板文件声明中使用的，WXML的语法和HTML语法相似，小程序使用标签名来引用一个组件，通常包含开始标签和结束标签，该标签的属性用来描述该组件。
+
+需要注意，所有组件名和属性都是小写，多个单词会以英文横杠 "-" 进行连接。
+对于一些容器组件，其内容可以声明在其开始标签和结束标签之间。
+
+所有组件都拥有表3-7列举的属性，主要涉及样式和事件绑定.参考链接：https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000eec0b998e80bb0086f092b5100a
+
+关于组件介绍，可参考：https://mp.weixin.qq.com/debug/wxadoc/dev/component/
+
+四、API
+wx对象实际上就是小程序的宿主环境所提供的全局对象，几乎所有小程序的API都挂载在wx对象底下（除了Page/App等特殊的构造器）。
+
+小程序提供的API按照功能主要分为几大类：网络、媒体、文件、数据缓存、位置、设备、界面、界面节点信息还有一些特殊的开放接口。
+
+API一般调用的约定：
+a.wx.on* 开头的 API 是监听某个事件发生的API接口，接受一个 Callback 函数作为参数。当该事件触发时，会调用 Callback 函数。
+b.如未特殊约定，多数 API 接口为异步接口 ，都接受一个Object作为参数。
+c.API的Object参数一般由success、fail、complete三个回调来接收接口调用结果
+d.wx.get* 开头的API是获取宿主环境数据的接口。
+e.wx.set* 开头的API是写入数据到宿主环境的接口。
+
+例子，通过wx.request发起网络请求
+  wx.request({
+  url: 'test.php',
+  data: {},
+  header: { 'content-type': 'application/json' },
+  success: function(res) {
+  // 收到https服务成功后返回
+  console.log(res.data)
+  },
+  fail: function() {
+  // 发生网络错误等情况触发
+  },
+  complete: function() {
+  // 成功或者失败后触发
+  }
+  })
+
+开发者只要了解一般调用API的技巧，再通过官方API文档 https://mp.weixin.qq.com/debug/wxadoc/dev/api/了解到对应的API参数细节即可。
+
+五、事件
+1.什么是事件
+UI界面的程序需要和用户互动，例如用户可能会点击你界面上某个按钮，又或者长按某个区域，这类反馈应该通知给开发者的逻辑层，需要将对应的处理状态呈现给用户。
+有些时候程序上的“行为反馈”不一定是用户主动触发的，例如我们在视频video播放的过程中，播放进度是会一直变化的，这种反馈也应该通知给开发者做相应的逻辑处理。
+在小程序里边，我们把这种“用户在渲染层的行为反馈”以及“组件的部分状态反馈”抽象为渲染层传递给逻辑层的“事件”。
+
+2.事件类型和对象
+参考表3-10 常见的事件类型和表3-11 事件对象属性，https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000846df9a03909b0086a50025180a
+
+这里需要注意的是target和currentTarget的区别，currentTarget为当前事件所绑定的组件，而target则是触发该事件的源头组件。
+
+组件的事件可以参考其参数说明，详情见官方文档 https://mp.weixin.qq.com/debug/wxadoc/dev/component/ 
+
+
+3、【重点】事件绑定与冒泡捕获
+A.事件绑定的写法和组件属性一致，以key="value"的形式，其中：
+  key以bind或者catch开头，然后跟上事件的类型，如bindtap、catchtouchstart。自基础库版本1.5.0起，bind和catch后可以紧跟一个冒号，其含义不变，如bind:tap、catch:touchstart。同时bind和catch前还可以加上capture-来表示捕获阶段。
+  value是一个字符串，需要在对应的页面Page构造器中定义同名的函数，否则触发事件时在控制台会有报错信息。
+  
+  bind和capture-bind的含义分别代表事件的冒泡阶段和捕获阶段
+
+
+
+B.事件捕获和冒泡触发时序
+
+以下示例中，点击 inner view 会先后调用handleTap1、handleTap2、handleTap3、handleTap4。
+
+使用capture-前缀阻止事件的冒泡和捕获
+<view id="outer" bind:tap="handleTap4" capture-bind:tap="handleTap1">
+  outer view
+  <view id="inner" bind:tap="handleTap3" capture-bind:tap="handleTap2">
+    inner view
+  </view>
+</view>
+bind事件绑定不会阻止冒泡事件向上冒泡，catch事件绑定可以阻止冒泡事件向上冒泡。如果将以上代码的capture-bind:tap="handleTap1"改成capture-catch:tap="handleTap1"，点击inner view只会触发handleTap1(catch事件阻止了tap事件冒泡)。
+
+事件的冒泡和捕获
+<view id="outer" bind:tap="handleTap4" capture-catch:tap="handleTap1">
+  outer view
+  <view id="inner" bind:tap="handleTap3" capture-bind:tap="handleTap2">
+    inner view
+  </view>
+</view>
+
+注意，除表3-10列举的事件类型之外的其他组件自定义事件，如无特殊声明都是非冒泡事件，如<form/>的submit事件，<input/>的input事件，<scroll-view/>的scroll事件。
+
+六、兼容
+小程序的宿主环境一直在迭代更新，提供更多的能力给开发者去完成更多的事情，所以你的小程序会运行在不同版本的宿主环境下。为了让你的小程序在不同环境下都能提供相应的服务，我们需要来了解一下在小程序中如何实现兼容办法。
+
+我们可能需要针对不同手机进行程序上的兼容，此时可以使用 wx.getSystemInfo 或者 wx.getSystemInfoSync 来获取手机品牌、操作系统版本号、微信版本号以及小程序基础库版本号等，通过这个信息，我们可以针对不同平台做差异化的服务。
+
+1.可以通过判断此API是否存在来做程序上的兼容。
+例子，通过判断API是否存在做兼容
+if (wx.openBluetoothAdapter) {
+  wx.openBluetoothAdapter()
+} else {
+  // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
+  wx.showModal({
+    title: '提示',
+    content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+  })
+}
+
+2.小程序还提供了wx.canIUse这个API，用于判断接口或者组件在当前宿主环境是否可用，其参数格式为: ${API}.${method}.${param}.${options}或者${component}.${attribute}.${option}
+
+各个段的含义如下：
+
+${API} 代表 API 名字
+${method} 代表调用方式，有效值为return, success, object, callback
+${param} 代表参数或者返回值
+${options} 代表参数的可选值
+${component} 代表组件名字
+${attribute} 代表组件属性
+${option} 代表组件属性的可选值
+调用的示例代码如下。
+
+wx.canIUse调用示例
+// 判断接口及其参数在宿主环境是否可用
+wx.canIUse('openBluetoothAdapter')
+wx.canIUse('getSystemInfoSync.return.screenWidth')
+wx.canIUse('getSystemInfo.success.screenWidth')
+wx.canIUse('showToast.object.image')
+wx.canIUse('onCompassChange.callback.direction')
+wx.canIUse('request.object.method.GET')
+
+ // 判断组件及其属性在宿主环境是否可用
+wx.canIUse('contact-button')
+wx.canIUse('text.selectable')
+wx.canIUse('button.open-type.contact')
+
+3.强制升级
+我们可以选择合适的判断方法来做小程序的向前兼容，以保证我们的小程序在旧版本的微信客户端也能工作正常。在不得已的情况下（小程序强依赖某个新的API或者组件时），还可以通过在小程序管理后台设置“基础库最低版本设置”来达到不向前兼容的目的。例如你选择设置你的小程序只支持1.5.0版本以上的宿主环境，那么当运行着1.4.0版本宿主环境的微信用户打开你的小程序的时候，微信客户端会显示当前小程序不可用，并且提示用户应该去升级微信客户端。
