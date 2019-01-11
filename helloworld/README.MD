@@ -401,3 +401,62 @@ Page({
     })
   }
 })
+
+三、发起https网络请求
+参考：https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000ee27c9c8d98ab0086788fa5b00a
+
+需要留意的是url是有长度限制的，其最大长度是1024字节，同时url上的参数需要拼接到字符串里，参数的值还需要做一次urlEncode。向服务端发送的数据超过1024字节时，就要采用HTTPPOST的形式，此时传递的数据就必须要使用data参数，基于这个情况，一般建议需要传递数据时，使用data参数来传递。
+
+
+防止重复提交
+参考：https://developers.weixin.qq.com/ebook?action=get_post_info&docid=000ee27c9c8d98ab0086788fa5b00a
+【2. 请求前后的状态处理】
+wx.request常见的示例代码
+
+var hasClick = false;
+
+Page({
+  tap: function() {
+    if (hasClick) {
+      return
+    }
+
+    hasClick = true
+    wx.showLoading()
+
+    wx.request({
+      url: 'https://test.com/getinfo',
+      method: 'POST',
+      header: { 'content-type':'application/json' },
+      data: { },
+
+      success: function (res) {
+        if (res.statusCode === 200) {
+          console.log(res.data)// 服务器回包内容
+        }
+      },
+
+      fail: function (res) {
+        wx.showToast({ title: '系统错误' })
+      },
+
+      complete: function (res) {
+        wx.hideLoading()
+        hasClick = false
+      }
+    })
+  }
+})
+
+一定要设置超时
+"networkTimeout": {
+    "request": 3000
+}
+
+如何排查网络请求异常？
+  检查手机网络状态以及wifi连接点是否工作正常。
+  检查小程序是否为开发版或者体验版，因为开发版和体验版的小程序不会校验域名。
+  检查对应请求的HTTPS证书是否有效，同时TLS的版本必须支持1.2及以上版本，可以在开发者工具的console面板输入showRequestInfo()查看相关信息。
+  域名不要使用IP地址或者localhost，并且不能带端口号，同时域名需要经过ICP备案。
+  检查app.json配置的超时时间配置是否太短，超时时间太短会导致还没收到回报就触发fail回调。
+  检查发出去的请求是否302到其他域名的接口，这种302的情况会被视为请求别的域名接口导致无法发起请求。
