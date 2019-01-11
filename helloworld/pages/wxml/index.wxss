@@ -2,4 +2,10 @@
 /* 尺寸单位 rpx 375个像素 iPhone6*/
 /* 样式引用 @import './test_0.wxss'*/
 /* 内联样式：style；小程序支持动态更新内联样式 style*/
-/* 选择器：类选择器、id选择器、元素选择器、伪元素选择器、伪元素选择器*/
+/* 选择器：类选择器、id选择器、元素选择器、伪元素选择器、伪元素选择器
+  WXSS选择器优先级:!important style="" #id .class element
+  权重越高越优先。在优先级相同的情况下，后设置的样式优先级高于先设置的样式。
+
+  为了减轻开发者样式开发的工作量，我们提供了WeUI.wxss基础样式库。
+  参考地址：https://github.com/Tencent/weui-wxss
+*/
