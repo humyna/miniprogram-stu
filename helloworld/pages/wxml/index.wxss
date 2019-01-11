@@ -1,0 +1,5 @@
+/* pages/wxml/index.wxss */
+/* 尺寸单位 rpx 375个像素 iPhone6*/
+/* 样式引用 @import './test_0.wxss'*/
+/* 内联样式：style；小程序支持动态更新内联样式 style*/
+/* 选择器：类选择器、id选择器、元素选择器、伪元素选择器、伪元素选择器*/
